@@ -20,4 +20,11 @@ export const APP_CONFIG = {
     DATE_PATTERN: 'YYYY-MM-DD',
     TIMESTAMP_FORMAT: 'HH:mm:ss',
   },
+
+  // all rate-limiter related constants
+  RATE_LIMITER_CONFIG: {
+    GLOBAL_RATE_LIMIT_KEY: 'global_rate_limit',
+    LIMIT_VALUE: 10,
+    TIME_WINDOW: 60,
+  },
 };

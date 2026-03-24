@@ -1,5 +1,5 @@
 // internal-imports
-import { loadModules } from './core/index.js';
+import { globalRateLimiter, loadModules } from './core/index.js';
 
 // external-imports
 import express from 'express';
@@ -13,7 +13,10 @@ export default function createApp(): Application {
   const application = express();
 
   // attach middlewares
-  application.use(express.json()).use(express.urlencoded({ extended: true }));
+  application
+    .use(express.json())
+    .use(express.urlencoded({ extended: true }))
+    .use(globalRateLimiter);
 
   // load modules
   loadModules(application);
