@@ -1,3 +1,6 @@
+// internal-imports
+import { redis } from '../../../core/index.js';
+
 // external-imports
 import axios from 'axios';
 
@@ -11,11 +14,6 @@ type Curr = {
   };
 };
 
-// hashmap for caching
-const cache: { [key: string]: number } = {
-  totalPageCount: 0,
-};
-
 // controller for module
 export const controller = {
   // @controller GET /
@@ -26,9 +24,9 @@ export const controller = {
 
   // @controller GET /totalPages
   getBooksTotalPages: async (_request: Request, response: Response) => {
-    // check if totalPageCount is already calculated
-    if (cache.totalPageCount)
-      return response.status(200).json({ totalPageCount: cache.totalPageCount });
+    // check if totalPageCount is cached
+    const cachedTPC = await redis.get('totalPageCount');
+    if (cachedTPC) return response.status(200).json({ totalPageCount: Number(cachedTPC) });
 
     const { data } = await axios.get('https://api.freeapi.app/api/v1/public/books');
 
@@ -39,7 +37,7 @@ export const controller = {
     );
 
     // cache the totalPageCount
-    cache.totalPageCount = totalPageCount;
+    await redis.set('totalPageCount', totalPageCount);
 
     // return the totalPageCount
     return response.status(200).json({ totalPageCount });
