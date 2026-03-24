@@ -11,6 +11,11 @@ type Curr = {
   };
 };
 
+// hashmap for caching
+const cache: { [key: string]: number } = {
+  totalPageCount: 0,
+};
+
 // controller for module
 export const controller = {
   // @controller GET /
@@ -21,6 +26,10 @@ export const controller = {
 
   // @controller GET /totalPages
   getBooksTotalPages: async (_request: Request, response: Response) => {
+    // check if totalPageCount is already calculated
+    if (cache.totalPageCount)
+      return response.status(200).json({ totalPageCount: cache.totalPageCount });
+
     const { data } = await axios.get('https://api.freeapi.app/api/v1/public/books');
 
     const totalPageCount = data.data.data.reduce(
@@ -28,6 +37,11 @@ export const controller = {
         curr.volumeInfo?.pageCount ? curr.volumeInfo.pageCount : 0 + acc,
       0
     );
+
+    // cache the totalPageCount
+    cache.totalPageCount = totalPageCount;
+
+    // return the totalPageCount
     return response.status(200).json({ totalPageCount });
   },
 };
