@@ -1,2 +1,2 @@
-# Learning-Redis
-Learning Redis
+# testing-redis
+Testing Redis
